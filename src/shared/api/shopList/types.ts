@@ -15,6 +15,7 @@ export type ShareShopListItem = {
 }
 
 export type CreateShopListDto = Pick<ShopListDto, 'name'>
+export type EditShopListDto = Pick<ShopListDto, 'name'>
 
 export type ProductDto = {
     id: string

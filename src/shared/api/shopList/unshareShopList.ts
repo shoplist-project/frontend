@@ -10,8 +10,8 @@ export async function unShareShopList(signal: AbortSignal, shopListId: string, u
 export function useUnShareShopList() {
     const {request, loading, data} = useMutationRequest(unShareShopList)
     return {
-        shareShopListRequest: request,
-        shareShopListData: data,
-        shareShopListLoading: loading
+        unShareShopListRequest: request,
+        unShareShopListData: data,
+        unShareShopListLoading: loading
     }
 }

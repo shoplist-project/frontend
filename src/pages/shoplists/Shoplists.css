@@ -1,0 +1,22 @@
+.shoplists-container {
+    max-width: 600px;
+    width: 80vw;
+}
+
+.actionButton {
+    z-index: 1;
+}
+
+
+.shoplist-item-link {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    transition: all 0.3s ease-in-out;
+    &:hover {
+        background-color: #fff;
+    }
+}

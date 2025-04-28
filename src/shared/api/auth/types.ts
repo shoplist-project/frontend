@@ -18,3 +18,8 @@ export type RegistrationResponseDto = {
     username: string
     password: string
 }
+
+export type UserDto = {
+    id: string
+    username: string
+}

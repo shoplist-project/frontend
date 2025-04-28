@@ -2,8 +2,8 @@ import {apiInstance} from "../api.ts";
 import {useMutationRequest} from "../useMutationRequest.ts";
 import {CreateShopListDto} from "./types.ts";
 
-export async function createShopList(signal: AbortSignal, loginRequest: CreateShopListDto) {
-    const response = await apiInstance(signal).post<string>('/api/shoplists', loginRequest)
+export async function createShopList(signal: AbortSignal, shopList: CreateShopListDto) {
+    const response = await apiInstance(signal).post<string>('/api/shoplists', shopList)
 
     return response.data
 }
