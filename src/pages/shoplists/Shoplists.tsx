@@ -1,20 +1,30 @@
-import {Access, useDeleteShopList,useEditShopList, useMe, useShopLists} from "../../shared/api";
+import {Access, useCreateShopList, useDeleteShopList, useEditShopList, useMe, useShopLists} from "../../shared/api";
 import {Button, Form, Input, InputRef, List, Modal, Typography} from "antd";
-import {Link} from "react-router";
-import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
+import {Link, useNavigate} from "react-router";
+import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
 import {useRef} from "react";
 
 import './Shoplists.css'
 
 export function Shoplists() {
-    const {shopListsData, shopListsLoading} = useShopLists()
+    const {shopListsData, shopListsLoading, shopListsRefetch} = useShopLists()
+    const {createShopListRequest} = useCreateShopList()
     const {editShopListRequest} = useEditShopList()
     const {deleteShopListRequest} = useDeleteShopList()
     const editInputRef = useRef<InputRef | null>(null)
     const {meData} = useMe()
+    const navigate = useNavigate()
     const [modal, contextHolder] = Modal.useModal()
     // loader
-    if (shopListsLoading && !shopListsData) return <></>
+    if (shopListsLoading || !shopListsData) return <></>
+
+
+    const handleCreateShoplist = async () => {
+        const shoplist = await createShopListRequest({
+            name: "Новый список"
+        })
+        navigate(`/shoplists/${shoplist.id}`)
+    }
 
     const handleDelete = (shopListId: string) => async () => {
         const ok = await modal.confirm({
@@ -24,8 +34,10 @@ export function Shoplists() {
             okType: 'danger',
             cancelText: 'Отмена'
         })
-        if (ok)
+        if (ok) {
             await deleteShopListRequest(shopListId)
+            await shopListsRefetch()
+        }
     }
 
     const handleEdit = (shopListId: string) => async () => {
@@ -37,8 +49,10 @@ export function Shoplists() {
                 cancelText: 'Отменить',
                 onOk: async () => {
                     const newName = editInputRef.current?.input?.value
-                    if (newName)
+                    if (newName) {
                         await editShopListRequest(shopListId, {name: newName})
+                        await shopListsRefetch()
+                    }
                 },
                 content: (
                     <Form layout='vertical'>
@@ -52,7 +66,7 @@ export function Shoplists() {
     }
     return (
         <div className='shoplists-container'>
-            <Typography.Title level={4}>Ваши списки</Typography.Title>
+            <Typography.Title level={4}>Ваши списки <Button onClick={handleCreateShoplist} size='small' type='text' icon={<PlusOutlined/>}/></Typography.Title>
             {contextHolder}
             <List>
                 {

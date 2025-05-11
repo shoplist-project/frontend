@@ -7,11 +7,11 @@ type RequestParams = {
 }
 
 export function useQueryRequest<R>(queryKey: unknown[], func: QueryFunc<R>, params?: RequestParams) {
-    const {data, isLoading, isError} = useQuery({
+    const {data, isLoading, isError, refetch} = useQuery({
         queryKey,
         queryFn: ({signal}) => func(signal),
         enabled: params?.enabled ?? true
     })
 
-    return {data, loading: isLoading, hasError: isError}
+    return {data, loading: isLoading, hasError: isError, refetch}
 }

@@ -2,7 +2,7 @@ import {apiInstance} from "../api.ts";
 import {useMutationRequest} from "../useMutationRequest.ts";
 
 export async function unShareShopList(signal: AbortSignal, shopListId: string, unShareWith: string[]) {
-    const response = await apiInstance(signal).post<string[]>(`/api/shoplists/${shopListId}/unshare`, unShareWith)
+    const response = await apiInstance(signal).post<string[]>(`/api/shoplists/${shopListId}/unshare`, {users: unShareWith})
 
     return response.data
 }

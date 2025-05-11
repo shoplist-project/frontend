@@ -9,11 +9,12 @@ export async function getShopList(signal: AbortSignal, shopListId: string): Prom
 }
 
 export function useShopList(shopListId: string) {
-    const {loading, data} = useQueryRequest(['shopLists', shopListId], (signal) => getShopList(signal, shopListId), {
+    const {loading, data, refetch} = useQueryRequest(['shopLists', shopListId], (signal) => getShopList(signal, shopListId), {
         enabled: shopListId.length > 0
     })
     return {
         shopListData: data,
-        shopListLoading: loading
+        shopListLoading: loading,
+        shopListRefetch: refetch
     }
 }

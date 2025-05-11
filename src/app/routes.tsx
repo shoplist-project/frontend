@@ -1,9 +1,24 @@
 import {
     createBrowserRouter,
 } from "react-router";
-import {AuthLayer, Shoplists, Shoplist} from "../pages";
+import {AuthLayer, Shoplists, Shoplist, Registration ,Login} from "../pages";
+import {NotAuthLayer} from "../pages/auth/NotAuthLayer.tsx";
 
 export const Router = createBrowserRouter([
+    {
+      path: '/auth',
+      Component: NotAuthLayer,
+        children: [
+            {
+                path: '/auth/login',
+                Component: Login
+            },
+            {
+                path: '/auth/register',
+                Component: Registration
+            }
+        ]
+    },
     {
         path: '/',
         Component: AuthLayer,

@@ -9,9 +9,10 @@ export async function getShopLists(signal: AbortSignal): Promise<ShortShopListDt
 }
 
 export function useShopLists() {
-    const {loading, data} = useQueryRequest(['shopLists'], getShopLists)
+    const {loading, data, refetch} = useQueryRequest(['shopLists'], getShopLists)
     return {
         shopListsData: data,
-        shopListsLoading: loading
+        shopListsLoading: loading,
+        shopListsRefetch: refetch
     }
 }

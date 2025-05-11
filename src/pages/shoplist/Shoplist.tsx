@@ -3,7 +3,7 @@ import {
     Access,
     ProductDto,
     ShopListDto,
-    useAddProduct,
+    useAddProduct, useDeleteProduct,
     useMe,
     useShareShopList,
     useShopList, useUnShareShopList,
@@ -17,13 +17,14 @@ import {useEffect, useRef, useState} from "react";
 export function Shoplist() {
     const {id = ''} = useParams<{ id: string }>()
 
-    const {shopListData, shopListLoading} = useShopList(id)
+    const {shopListData, shopListLoading, shopListRefetch} = useShopList(id)
 
     const {meData} = useMe()
     const {updateProductRequest} = useUpdateProduct()
 
     const [modal, ModalComponent] = Modal.useModal()
     const {addProductRequest} = useAddProduct()
+    const {deleteProductRequest} = useDeleteProduct()
     const [currentEditId, setCurrentEditId] = useState<ProductDto | undefined>()
     const inputRef = useRef<InputRef | null>(null)
     useEffect(() => {
@@ -34,6 +35,7 @@ export function Shoplist() {
 
     const updateProduct = (productId: string) => async (data: Partial<Pick<ProductDto, 'name' | 'strikeout'>>) => {
         await updateProductRequest(id, productId, data)
+        await shopListRefetch()
     }
 
     const handleUpdateProduct = async (productId: string, name: string) => {
@@ -42,11 +44,12 @@ export function Shoplist() {
     }
 
     const handleAddProduct = async () => {
-        await addProductRequest(id, {name: ''})
+        await addProductRequest(id, {name: 'Новый продукт'})
+        await shopListRefetch()
     }
 
     const handleOpenShareModal = async () => {
-        if (shopListData)
+        if (shopListData) {
             await modal.info({
                     icon: <></>,
                     title: 'Управление доступом',
@@ -54,6 +57,17 @@ export function Shoplist() {
                     content: <ShareModalContent shopList={shopListData}/>
                 }
             )
+            await shopListRefetch()
+        }
+
+    }
+
+    const handleDeleteProduct = (id: string) => async () => {
+        if (shopListData) {
+            await deleteProductRequest(shopListData.id, id)
+            await shopListRefetch()
+        }
+
     }
 
     if (shopListLoading || !shopListData) return <></>
@@ -73,6 +87,7 @@ export function Shoplist() {
                 {
                     shopListData.access === Access.Write && (
                         <List.Item
+                            key='addProduct'
                             onClick={handleAddProduct}
                             actions={[
                                 <Button size='small' className='add-button' type='text' icon={<PlusOutlined/>}/>
@@ -88,7 +103,7 @@ export function Shoplist() {
                                 key={product.id}
                                 className='product-card'
                                 actions={[
-                                    <Button type='text' size='small' icon={<DeleteOutlined/>}/>
+                                    <Button onClick={handleDeleteProduct(product.id)} type='text' size='small' icon={<DeleteOutlined/>}/>
                                 ]}>
                                 <List.Item.Meta
                                     avatar={
@@ -104,7 +119,7 @@ export function Shoplist() {
                                             defaultValue={product.name}
                                             className={product.strikeout ? 'product-name-strikeout' : ''}
                                             size='small'
-                                            onBlur={(e) => handleUpdateProduct(product.id, e.target.value)}
+                                            onBlur={(e) => e.target.value !== product.name && handleUpdateProduct(product.id, e.target.value)}
                                         />
                                     }
                                 />
@@ -119,6 +134,7 @@ export function Shoplist() {
 
 const ShareModalContent = (props: { shopList: ShopListDto }) => {
     const {shopList} = props
+    const {shopListData, shopListRefetch} = useShopList(shopList.id)
 
     const [shareUsername, setShareUsername] = useState('')
     const {shareShopListRequest} = useShareShopList()
@@ -127,6 +143,7 @@ const ShareModalContent = (props: { shopList: ShopListDto }) => {
     const handleShare = (access: Access) => async () => {
         await shareShopListRequest(shopList.id, {users: [shareUsername], access})
         setShareUsername('')
+        shopListRefetch()
     }
     return (
         <>
@@ -144,13 +161,16 @@ const ShareModalContent = (props: { shopList: ShopListDto }) => {
             </div>
             <List>
                 {
-                    shopList.sharedWith.map(person => (
+                    shopListData?.sharedWith.map(person => (
                         <List.Item
                             actions={[
                                 <Button
                                     size='small'
                                     type='text'
-                                    onClick={() => unShareShopListRequest(shopList.id, [person.username])}
+                                    onClick={async () => {
+                                        await unShareShopListRequest(shopList.id, [person.username])
+                                        await shopListRefetch()
+                                    }}
                                     icon={<DeleteOutlined/>}
                                 />
                             ]}

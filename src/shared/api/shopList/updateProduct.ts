@@ -3,7 +3,7 @@ import {useMutationRequest} from "../useMutationRequest.ts";
 import {ProductDto, UpdateProductDto} from "./types.ts";
 
 export async function updateProduct(signal: AbortSignal, shopListId: string, productId: string, product: UpdateProductDto) {
-    const response = await apiInstance(signal).post<ProductDto>(`/api/shoplists/${shopListId}/products/${productId}`, product)
+    const response = await apiInstance(signal).put<ProductDto>(`/api/shoplists/${shopListId}/products/${productId}`, product)
 
     return response.data
 }

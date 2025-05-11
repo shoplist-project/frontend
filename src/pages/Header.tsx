@@ -18,7 +18,7 @@ export function Header() {
         <Layout.Header className='header'>
             <Typography.Title level={3} className='logo'><a href='/'>Shop list</a></Typography.Title>
             <ConfigProvider theme={{algorithm: theme.darkAlgorithm}}>
-                <Dropdown trigger='click' menu={{
+                <Dropdown trigger={['click']} menu={{
                     items: [
                         {
                             key: 'logout',
