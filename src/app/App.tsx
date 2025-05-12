@@ -4,7 +4,13 @@ import {RouterProvider} from "react-router";
 import {Router} from "./routes.tsx";
 import {ConfigProvider} from "antd";
 
-const client = new QueryClient()
+const client = new QueryClient({
+    defaultOptions: {
+        queries: {
+            retry: 0
+        }
+    }
+})
 
 export function App() {
     return (

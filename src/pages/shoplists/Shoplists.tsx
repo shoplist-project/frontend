@@ -7,7 +7,7 @@ import {useRef} from "react";
 import './Shoplists.css'
 
 export function Shoplists() {
-    const {shopListsData, shopListsLoading, shopListsRefetch} = useShopLists()
+    const {shopListsData = [], shopListsLoading, shopListsRefetch} = useShopLists()
     const {createShopListRequest} = useCreateShopList()
     const {editShopListRequest} = useEditShopList()
     const {deleteShopListRequest} = useDeleteShopList()

@@ -16,7 +16,7 @@ export function Registration() {
         setError(null)
         try {
             await registerRequest(values)
-            await navigate('/')
+            await navigate('/auth/login')
 
         } catch {
             setError('Логин занят')
